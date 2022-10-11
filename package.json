@@ -1,8 +1,8 @@
 {
-  "name": "my_actives",
-  "description": "my Activities",
+  "name": "sport-map",
+  "description": "my sport Activities map",
   "version": "1.0.0",
-  "author": "meng a ",
+  "author": "meng zai",
   "dependencies": {
     "@mapbox/mapbox-gl-language": "^0.10.1",
     "@mapbox/polyline": "^1.1.1",
@@ -41,7 +41,7 @@
     "webpack": "^5.11.0"
   },
   "license": "MIT",
-  "private": true,
+  "private": false,
   "scripts": {
     "data:clean": "rm scripts/data.db GPX_OUT/* activities/* src/static/activities.json",
     "data:download:garmin": "python3 scripts/garmin_sync.py",
@@ -59,7 +59,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/geekplux/activities"
+    "url": "https://github.com/Allen1012/sport-map"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
