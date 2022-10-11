@@ -99,7 +99,7 @@ export default () => {
     setIntervalId(id);
   }, [year]);
 
-  // TODO refactor
+  // TODO 重构
   useEffect(() => {
     if (year !== 'Total') {
       return;

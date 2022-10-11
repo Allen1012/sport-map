@@ -24,6 +24,13 @@ const formatPace = (d) => {
   return `${minutes}:${seconds.toFixed(0).toString().padStart(2, '0')}`;
 };
 
+// 小时 平均速度
+export const formatAverageHour = (d) => {
+  if (Number.isNaN(d)) return '0';
+  const average = d * 3.6 ;
+  return average.toFixed(2) ;
+};
+
 // for scroll to the map
 const scrollToMap = () => {
   const el = document.querySelector('.fl.w-100.w-70-l');

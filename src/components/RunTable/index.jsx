@@ -26,10 +26,13 @@ const RunTable = ({
   const sortDateFuncClick =
     sortFuncInfo === 'Date' ? sortDateFunc : sortDateFuncReverse;
   const sortFuncMap = new Map([
-    ['KM', sortKMFunc],
-    ['Pace', sortPaceFunc],
-    ['BPM', sortBPMFunc],
-    ['Date', sortDateFuncClick],
+    ['活动', sortDateFuncClick],
+    ['里程', sortKMFunc],
+    ['运动时间', sortKMFunc],
+    ['配速', sortPaceFunc],
+    ['均速', sortPaceFunc],
+    ['心率', sortBPMFunc],
+
   ]);
   const handleClick = (e) => {
     const funcName = e.target.innerHTML;
@@ -51,7 +54,7 @@ const RunTable = ({
       <table className={styles.runTable} cellSpacing="0" cellPadding="0">
         <thead>
           <tr>
-            <th />
+            <th>日期</th>
             {Array.from(sortFuncMap.keys()).map((k) => (
               <th key={k} onClick={(e) => handleClick(e)}>
                 {k}
