@@ -1,7 +1,7 @@
 import React from 'react';
 import useHover from 'src/hooks/useHover';
 import Stat from 'src/components/Stat';
-import { formatPace } from 'src/utils/utils';
+import {formatAverageHour, formatPace} from 'src/utils/utils';
 import useActivities from 'src/hooks/useActivities';
 import styles from './style.module.scss';
 
@@ -22,14 +22,22 @@ const YearStat = ({ year, onClick }) => {
   let sumDistance = 0;
   let streak = 0;
   let pace = 0;
+  let paceCount = 0;
+  let rideSum = 0;
+  let rideCount = 0;
   let paceNullCount = 0;
+  let rideNullCount = 0;
   let heartRate = 0;
   let heartRateNullCount = 0;
   runs.forEach((run) => {
     sumDistance += run.distance || 0;
     if (run.average_speed && run.type === 'Run') {
       pace += run.average_speed;
-    } else {
+      paceCount++;
+    }else if(run.average_speed && run.type === 'Ride'){
+      rideSum += run.average_speed;
+      rideCount++;
+    }else {
       paceNullCount++;
     }
     if (run.average_heartrate) {
@@ -42,7 +50,8 @@ const YearStat = ({ year, onClick }) => {
     }
   });
   sumDistance = (sumDistance / 1000.0).toFixed(1);
-  const avgPace = formatPace(pace / (runs.length - paceNullCount));
+  const avgPace = formatPace(pace / paceCount);
+  const avgHour = formatAverageHour(rideSum / rideCount);
   const hasHeartRate = !(heartRate === 0);
   const avgHeartRate = (heartRate / (runs.length - heartRateNullCount)).toFixed(
     0
@@ -61,6 +70,7 @@ const YearStat = ({ year, onClick }) => {
         <Stat value={runs.filter(r => r.type == 'Swim').length} description=" Swims" />
         <Stat value={sumDistance} description=" KM" />
         <Stat value={avgPace} description=" Avg Pace" />
+        <Stat value={avgHour} description=" 均速" />
         <Stat
           value={`${streak} day`}
           description=" Streak"
