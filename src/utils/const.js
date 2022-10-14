@@ -44,7 +44,7 @@ export {
   RUN_TITLES,
 };
 
-export const AVATAR = 'head_icon.jpg';
+export const AVATAR = 'images/head_icon.jpg';
 export const NAVS = [
   { text: 'Blog', link: 'https://geekplux.com/' },
   { text: 'About', link: 'https://geekplux.com/about' },
