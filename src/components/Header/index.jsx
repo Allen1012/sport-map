@@ -1,45 +1,38 @@
 import React from 'react';
 import { Link } from 'gatsby';
 import { AVATAR, NAVS } from 'src/utils/const';
-import Img from "gatsby-image"
+import headIcon from "src/images/head_icon.jpg"
 
-export const query = graphql `
-  query {
-    file(relativePath: { eq: "head_icon.jpg" }) {
-      childImageSharp {
-        # Specify the image processing specifications right in the query.
-        # Makes it trivial to update as your page's design changes.
-        fixed(width: 125, height: 125) {
-          ...GatsbyImageSharpFixed
-        }
-      }
-    }
-  }
-`
 
 const Header = ({ siteTitle }) => {
+
   if (!AVATAR && !NAVS) return null;
+
+  if(AVATAR != ""){
+      var srca = AVATAR;
+  }else {
+      var srca = headIcon;
+  }
+
   return (
     <>
       <nav
         className="db flex justify-between w-100 ph5-l"
         style={{ marginTop: '3rem' }}
       >
-        {AVATAR && (
+        {(
           <div className="dib w-25 v-mid">
             <Link to="/" className="link dim">
               <picture>
                 <img
                   className="dib w3 h3 br-100"
                   alt={siteTitle || 'avatar'}
-                  src={AVATAR}
+                  src={srca}
                 />
               </picture>
             </Link>
           </div>
         )}
-          <h1>haah</h1>
-          {/*<Img fixed={siteTitle.file.childImageSharp.fixed} />*/}
         {NAVS && (
           <div className="dib w-75 v-mid tr">
             {NAVS.map((n, i) => (

@@ -44,10 +44,10 @@ export {
   RUN_TITLES,
 };
 
-export const AVATAR = 'images/head_icon.jpg';
+export const AVATAR = ''; //此处为空则加src/images/head_icon.jpg 作为头像
 export const NAVS = [
-  { text: 'Blog', link: 'https://geekplux.com/' },
-  { text: 'About', link: 'https://geekplux.com/about' },
+  // { text: 'Blog', link: 'https://geekplux.com/' },
+  { text: 'About', link: 'https://github.com/Allen1012/sport-map' },
 ];
 
 const nike = 'rgb(224,237,94)';

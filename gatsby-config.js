@@ -8,6 +8,8 @@ module.exports = {
     'gatsby-transformer-json',
     'gatsby-transformer-sharp',
     'gatsby-plugin-sharp',
+    "gatsby-plugin-image",
+      // "gatsby-source-filesystem",
     {
       resolve: 'gatsby-source-filesystem',
       options: {
@@ -17,7 +19,7 @@ module.exports = {
     {
       resolve : `gatsby-source-filesystem` ,
       options : {
-        name : `images` ,
+        name : `image` ,
         path : './src/images',
       },
     },
