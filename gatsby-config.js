@@ -56,5 +56,5 @@ module.exports = {
       },
     },
   ],
-  pathPrefix: ``, //地址前缀,如部署到github 需改此项
+  pathPrefix: `/sport-map`, //地址前缀,如部署到github 需改此项
 };
