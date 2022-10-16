@@ -16,8 +16,11 @@ const CHINESE_INFO_MESSAGE = (yearLength, year) =>
   `我用 App 记录自己运动 ${yearLength} 年了，下面列表展示的是 ${year} 的数据`;
 const ENGLISH_INFO_MESSAGE = (yearLength, year) =>
   `哈哈哈`;
+const CHINESE_TITLE = `我的运动轨迹`;
+const ENGLISH_TITLE = `Activities`;
 
 const INFO_MESSAGE = IS_CHINESE ? CHINESE_INFO_MESSAGE : ENGLISH_INFO_MESSAGE;
+const WEB_TITLE = IS_CHINESE ? CHINESE_TITLE : ENGLISH_TITLE;
 const FULL_MARATHON_RUN_TITLE = IS_CHINESE ? '全程马拉松' : 'Full Marathon';
 const HALF_MARATHON_RUN_TITLE = IS_CHINESE ? '半程马拉松' : 'Half Marathon';
 const MORNING_RUN_TITLE = IS_CHINESE ? '清晨跑步' : 'Morning Run';
@@ -42,6 +45,7 @@ export {
   IS_CHINESE,
   INFO_MESSAGE,
   RUN_TITLES,
+  WEB_TITLE,
 };
 
 export const AVATAR = ''; //此处为空则加src/images/head_icon.jpg 作为头像

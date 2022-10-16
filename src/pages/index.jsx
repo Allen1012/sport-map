@@ -19,7 +19,7 @@ import {
   sortDateFunc,
   getBoundsForGeoData,
 } from 'src/utils/utils';
-import { IS_CHINESE } from 'src/utils/const';
+import { IS_CHINESE,WEB_TITLE } from 'src/utils/const';
 
 export default () => {
   const { activities, thisYear } = useActivities();
@@ -159,7 +159,7 @@ export default () => {
     <Layout>
       <div className="mb5">
         <div className="w-100">
-          <h1 className="f1 fw9 i">Activities</h1>
+          <h1 className="f1 fw9 i">{WEB_TITLE}</h1>
         </div>
         {viewport.zoom <= 3 && IS_CHINESE ? (
           <LocationStat
