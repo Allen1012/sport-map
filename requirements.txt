@@ -18,3 +18,5 @@ python-tcxparser
 rich
 lxml
 eviltransform
+bs4
+pycryptodome

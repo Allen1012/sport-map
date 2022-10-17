@@ -7,7 +7,6 @@ from generator import Generator
 from generator.db import del_db, update_or_create_activity, Activity
 
 
-
 def run_strava_sync(client_id, client_secret, refresh_token):
     generator = Generator(SQL_FILE)
     generator.set_strava_config(client_id, client_secret, refresh_token)
