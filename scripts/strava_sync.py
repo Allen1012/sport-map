@@ -16,7 +16,7 @@ def run_strava_sync(client_id, client_secret, refresh_token):
     activities_list = generator.load()
 
     print("---------")
-    # print(activities_list)
+    print(activities_list)
 
     with open(JSON_FILE, "w") as f:
         json.dump(activities_list, f)
