@@ -140,6 +140,7 @@ class Generator:
 
         return activity_list
 
+# 从数据中读取所有运动的run_id
     def get_old_tracks_ids(self):
         try:
             activities = self.session.query(Activity).all()

@@ -43,7 +43,7 @@ def encrypt_password(public_key, password, salt):
     ciphertext = enc.encrypt(message)
     return b64encode(ciphertext).decode("utf8")
 
-
+# 请求头设备信息
 def device_info_headers():
     return {
         "Connection": "keep-alive",
@@ -101,6 +101,7 @@ class Xingzhe:
             f"your refresh_token and user_id are {str(self.session_id)} {str(self.user_id)}"
         )
 
+# 按月获取运动数据
     def get_activities_by_month(self, year, month):
         url = f"{XINGZHE_URL_DICT['ACTIVITY_LIST_URL']}user_id={self.user_id}&year={year}&month={month}"
 
@@ -110,20 +111,24 @@ class Xingzhe:
             return json["data"]["wo_info"]
         return []
 
+# 从行者获取所有的运动id
     def get_old_tracks(self):
         results = []
         now_date = datetime.now()
+        # 获取今年前的所有数据
         for year in range(now_date.year - startYear):
             for m in range(12):
                 activities = self.get_activities_by_month(
-                    year=year + startYear, month=m + 1
+                    year = year + startYear, month = m + 1
                 )
                 if len(activities) == 0:
                     pass
+                # 提取行者数据中的关键信息
                 ids = [
                     {"id": i["id"], "type": TYPE_DICT[i["sport"]]} for i in activities
                 ]
                 results = results + ids
+        # 获取今年的所有数据
         for m in range(now_date.month):
             activities = self.get_activities_by_month(year=now_date.year, month=m + 1)
             if len(activities) == 0:
@@ -132,6 +137,7 @@ class Xingzhe:
             results = results + ids
         return results
 
+# 下载gpx文件
     def download_gpx(self, activity_id):
         url = f"{XINGZHE_URL_DICT['DOWNLOAD_GPX_URL']}/{activity_id}/gpx/"
         response = self.session.get(url)
@@ -169,6 +175,7 @@ async def gather_with_concurrency(n, tasks):
 
 
 if __name__ == "__main__":
+    # 获取脚本输入参数
     parser = argparse.ArgumentParser()
     parser.add_argument("mobile_or_token", help="Xingzhe phone number or session_id")
     parser.add_argument("password_or_user_id", help="Xinzhe password or user_id")
@@ -187,6 +194,7 @@ if __name__ == "__main__":
     )
     options = parser.parse_args()
     print(options)
+    # 登录行者
     if options.from_session_id:
         x = Xingzhe(
             session_id=str(options.mobile_or_token),
@@ -201,7 +209,9 @@ if __name__ == "__main__":
 
     generator = Generator(SQL_FILE)
     old_tracks_ids = generator.get_old_tracks_ids()
+    # todo 此处可优化仅获取行者最近一个月数据
     tracks = x.get_old_tracks()
+    # 过滤不在数据中的id 进行下载
     new_tracks = [i for i in tracks if str(i["id"]) not in old_tracks_ids]
 
     print(f"{len(new_tracks)} new activities to be downloaded")
