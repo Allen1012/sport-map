@@ -2,7 +2,6 @@ import datetime
 import time
 import sys
 
-
 import arrow
 import stravalib
 from sqlalchemy import func
@@ -18,7 +17,6 @@ class Generator:
         print(db_path)
         self.client = stravalib.Client()
         self.session = init_db(db_path)
-
 
         self.client_id = ""
         self.client_secret = ""
@@ -140,7 +138,7 @@ class Generator:
 
         return activity_list
 
-# 从数据中读取所有运动的run_id
+    # 从数据中读取所有运动的run_id
     def get_old_tracks_ids(self):
         try:
             activities = self.session.query(Activity).all()
@@ -150,3 +148,20 @@ class Generator:
             print(f"something wrong with {str(e)}")
             return []
 
+    # activity_file, data_type, name=None, description=None,
+    #                         activity_type=None, private=None, external_id=None):
+    def upload_activitys(self):
+        print("# in: upload_activitys")
+
+        self.check_access()
+
+        file_path = '/Users/meng/Documents/gpx/333333.gpx'
+        try:
+            ret = self.client.upload_activity(open(file_path,'r'), "gpx", "2022-10-18 上午  骑行", "desc 2022-10-17 上午  骑行", "ride")
+            print("# ret: ")
+            print(ret.response)
+            ret_a = ret.poll()
+            print(ret_a)
+        except Exception as e:
+            print(f"something wrong with {str(e)}")
+        print("##########")

@@ -22,6 +22,12 @@ def run_strava_sync(client_id, client_secret, refresh_token):
         json.dump(activities_list, f)
 
 
+def test_upload(client_id, client_secret, refresh_token):
+    generator = Generator(SQL_FILE)
+    generator.set_strava_config(client_id, client_secret, refresh_token)
+    generator.upload_activitys()
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("client_id", help="strava client id")
@@ -29,4 +35,7 @@ if __name__ == "__main__":
     parser.add_argument("refresh_token", help="strava refresh token")
     options = parser.parse_args()
     # del_db(SQL_FILE)
-    run_strava_sync(options.client_id, options.client_secret, options.refresh_token)
+
+    # run_strava_sync(options.client_id, options.client_secret, options.refresh_token)
+
+    test_upload(options.client_id, options.client_secret, options.refresh_token)
