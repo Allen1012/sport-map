@@ -4,13 +4,9 @@ import yaml
 GET_DIR = "activities"
 OUTPUT_DIR = "activities"
 GPX_FOLDER = os.path.join(os.getcwd(), "GPX_OUT")
+GPX_TO_STRAVA_FOLDER = os.path.join(os.getcwd(), "GPX_TO_STRAVA")
 SQL_FILE = "scripts/data.db"
 JSON_FILE = "src/static/activities.json"
-
-# TODO: Move into nike_sync
-BASE_URL = "https://api.nike.com/sport/v3/me"
-TOKEN_REFRESH_URL = "https://unite.nike.com/tokenRefresh"
-NIKE_CLIENT_ID = "HlHa2Cje3ctlaOqnxvgZXNaAs7T9nAuH"
 
 try:
     with open("config.yaml") as f:

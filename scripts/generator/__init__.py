@@ -1,13 +1,17 @@
 import datetime
 import time
 import sys
-
+import gpxpy as mod_gpxpy
 import arrow
 import stravalib
+import os
+
 from sqlalchemy import func
 from gpxtrackposter import track_loader
-
+from config import GPX_TO_STRAVA_FOLDER
 from .db import init_db, update_or_create_activity, Activity
+
+
 
 
 class Generator:
@@ -153,15 +157,50 @@ class Generator:
     def upload_activitys(self):
         print("# in: upload_activitys")
 
+        loader = track_loader.TrackLoader()
+        file_names = [x for x in loader._list_gpx_files(GPX_TO_STRAVA_FOLDER)]
+        print("files:")
+        print(file_names)
+        print("-----------")
+
         self.check_access()
 
-        file_path = '/Users/meng/Documents/gpx/333333.gpx'
-        try:
-            ret = self.client.upload_activity(open(file_path,'r'), "gpx", "2022-10-18 上午  骑行", "desc 2022-10-17 上午  骑行", "ride")
-            print("# ret: ")
-            print(ret.response)
-            ret_a = ret.poll()
-            print(ret_a)
-        except Exception as e:
-            print(f"something wrong with {str(e)}")
+        for file_name in file_names:
+            print(file_name)
+            with open(file_name, "r") as file:
+                gpx_m = mod_gpxpy.parse(file)
+                print("开始上传gpx：")
+                print(gpx_m.name)
+                print("--")
+                # print(gpx_m.get_time_bounds())
+                # print(gpx_m.get_duration())
+                # print(gpx_m.tracks)
+                # print(gpx_m.tracks[0].name)
+                # print(gpx_m.tracks[0].number)
+
+                # print(gpx_m.tracks[0].source)
+
+                try:
+                    desc = gpx_m.name + " (load gpx form " + gpx_m.tracks[0].source + ")"
+                    type = 'ride'
+                    if gpx_m.tracks[0].type is not None :
+                        type = gpx_m.tracks[0].type.lower()
+                    print(type)
+                    print(desc)
+                    ret = self.client.upload_activity(open(file_name,'r'), "gpx", gpx_m.name, desc, type)
+                    print("# ret: ")
+                    print(ret.response)
+                    # ret_a = ret.poll()
+                    # print(ret_a)
+                except Exception as e:
+                    print(f"something wrong with {str(e)}")
+
+                file.close()
+                print("-----------")
+
+            os.remove(file_name)
+
+        #
+        # file_path = '/Users/meng/Documents/gpx/333333.gpx'
+
         print("##########")

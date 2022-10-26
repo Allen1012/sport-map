@@ -11,7 +11,7 @@ import aiofiles
 import bs4
 import gpxpy as mod_gpxpy
 import requests
-from config import GPX_FOLDER, JSON_FILE, SQL_FILE
+from config import GPX_FOLDER, JSON_FILE, SQL_FILE,GPX_TO_STRAVA_FOLDER
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 from generator import Generator
@@ -103,6 +103,10 @@ class Xingzhe:
 
 # 按月获取运动数据
     def get_activities_by_month(self, year, month):
+        print("year:")
+        print(year)
+        print("month:")
+        print(month)
         url = f"{XINGZHE_URL_DICT['ACTIVITY_LIST_URL']}user_id={self.user_id}&year={year}&month={month}"
 
         response = self.session.get(url)
@@ -112,11 +116,18 @@ class Xingzhe:
         return []
 
 # 从行者获取所有的运动id
-    def get_old_tracks(self):
-        results = []
+    def get_old_tracks(self,start_year = None,start_month = None):
         now_date = datetime.now()
+
+        if start_year is None:
+            start_year = now_date.year
+        if start_month is None:
+            start_month = now_date.month
+
+        results = []
+
         # 获取今年前的所有数据
-        for year in range(now_date.year - startYear):
+        for year in range(now_date.year - start_year):
             for m in range(12):
                 activities = self.get_activities_by_month(
                     year = year + startYear, month = m + 1
@@ -129,12 +140,22 @@ class Xingzhe:
                 ]
                 results = results + ids
         # 获取今年的所有数据
-        for m in range(now_date.month):
+        for m in range(start_month):
             activities = self.get_activities_by_month(year=now_date.year, month=m + 1)
             if len(activities) == 0:
                 pass
             ids = [{"id": i["id"], "type": TYPE_DICT[i["sport"]]} for i in activities]
             results = results + ids
+        return results
+
+    def get_this_month_tracks(self):
+        now_date = datetime.now()
+        results = []
+        activities = self.get_activities_by_month(year=now_date.year, month=now_date.month)
+        if len(activities) == 0:
+            return results
+        ids = [{"id": i["id"], "type": TYPE_DICT[i["sport"]]} for i in activities]
+        results = results + ids
         return results
 
 # 下载gpx文件
@@ -146,7 +167,8 @@ class Xingzhe:
 
     async def download_xingzhe_gpx(self, track):
         try:
-            file_path = os.path.join(GPX_FOLDER, f"{track['id']}.gpx")
+            # gpx文件存储路径
+            file_path = os.path.join(GPX_TO_STRAVA_FOLDER, f"{track['id']}.gpx")
             if os.path.exists(file_path):
                 print(f"activity {str(track['id'])}: downloaded already")
                 pass
@@ -210,7 +232,7 @@ if __name__ == "__main__":
     generator = Generator(SQL_FILE)
     old_tracks_ids = generator.get_old_tracks_ids()
     # todo 此处可优化仅获取行者最近一个月数据
-    tracks = x.get_old_tracks()
+    tracks = x.get_this_month_tracks()
     # 过滤不在数据中的id 进行下载
     new_tracks = [i for i in tracks if str(i["id"]) not in old_tracks_ids]
 
