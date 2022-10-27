@@ -38,6 +38,11 @@ ACTIVITY_KEYS = [
     "average_speed",
 ]
 
+LOAD_GPX_KEYS = [
+    "track_id",
+    "name",
+    "load_time",
+]
 
 class Activity(Base):
     __tablename__ = "activities"
@@ -69,6 +74,44 @@ class Activity(Base):
             out["streak"] = self.streak
 
         return out
+
+
+class LoadXingzheGpxLog(Base):
+    __tablename__ = "load_xingzhe_gpx_log"
+
+    track_id = Column(Integer, primary_key=True)
+    name = Column(String)
+    load_time = Column(String)
+
+    def to_dict(self):
+        out = {}
+        for key in LOAD_GPX_KEYS:
+            attr = getattr(self, key)
+            if isinstance(attr, (datetime.timedelta, datetime.datetime)):
+                out[key] = str(attr)
+            else:
+                out[key] = attr
+
+        return out
+
+def select_load_logs(db_path):
+    print("###")
+    print("in select_load_logs():")
+    session = init_db(db_path)
+    loadLog = LoadXingzheGpxLog(
+        track_id=1239,
+        name="test a",
+        load_time="2022.10.27"
+    )
+    session.add(loadLog)
+    session.commit()
+
+    retLogs = session.query(LoadXingzheGpxLog).filter(LoadXingzheGpxLog.track_id.in_([1234,1235])).all()
+    for item in retLogs:
+        print(item.to_dict())
+        print(item.name)
+
+    print("###############")
 
 
 def update_or_create_activity(session, run_activity):
