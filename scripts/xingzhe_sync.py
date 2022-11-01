@@ -17,6 +17,7 @@ from Crypto.PublicKey import RSA
 from generator import Generator
 
 from utils import make_activities_file
+from generator.db import insert_xingzhe_load_log
 
 startYear = 2012
 
@@ -101,12 +102,9 @@ class Xingzhe:
             f"your refresh_token and user_id are {str(self.session_id)} {str(self.user_id)}"
         )
 
-# 按月获取运动数据
+# 按月获取运动数据列表
     def get_activities_by_month(self, year, month):
-        print("year:")
-        print(year)
-        print("month:")
-        print(month)
+        print("获取行者运动列表：" ,year,"-",month)
         url = f"{XINGZHE_URL_DICT['ACTIVITY_LIST_URL']}user_id={self.user_id}&year={year}&month={month}"
 
         response = self.session.get(url)
@@ -148,13 +146,14 @@ class Xingzhe:
             results = results + ids
         return results
 
+# 获取这个月数据
     def get_this_month_tracks(self):
         now_date = datetime.now()
         results = []
         activities = self.get_activities_by_month(year=now_date.year, month=now_date.month)
         if len(activities) == 0:
             return results
-        ids = [{"id": i["id"], "type": TYPE_DICT[i["sport"]]} for i in activities]
+        ids = [{"id": i["id"], "type": TYPE_DICT[i["sport"]], "title": i["title"]} for i in activities]
         results = results + ids
         return results
 
@@ -172,15 +171,18 @@ class Xingzhe:
             if os.path.exists(file_path):
                 print(f"activity {str(track['id'])}: downloaded already")
                 pass
-            gpx_data = self.download_gpx(track["id"])
-            gpx = mod_gpxpy.parse(gpx_data.decode("utf8"))
-            tracks = gpx.tracks
-            tracks[0].source = "xingzhe"
-            tracks[0].type = track["type"]
-            tracks[0].number = track["id"]
-            async with aiofiles.open(file_path, "wb") as fb:
+            else:
+                gpx_data = self.download_gpx(track["id"])
+                gpx = mod_gpxpy.parse(gpx_data.decode("utf8"))
+                tracks = gpx.tracks
+                tracks[0].source = "xingzhe"
+                tracks[0].type = track["type"]
+                tracks[0].number = track["id"]
+                async with aiofiles.open(file_path, "wb") as fb:
 
-                await fb.write(gpx.to_xml(version="1.1").encode("utf8"))
+                    await fb.write(gpx.to_xml(version="1.1").encode("utf8"))
+                # 更新load log
+                insert_xingzhe_load_log(SQL_FILE,track["id"],track["title"])
         except Exception as err:
             print(f"Failed to download activity {track}: " + str(err))
             pass
@@ -230,7 +232,8 @@ if __name__ == "__main__":
         x.login_by_password()
 
     generator = Generator(SQL_FILE)
-    old_tracks_ids = generator.get_old_tracks_ids()
+    # old_tracks_ids = generator.get_old_tracks_ids()
+    old_tracks_ids = generator.get_xingzhe_load_track_ids()
     # todo 此处可优化仅获取行者最近一个月数据
     tracks = x.get_this_month_tracks()
     # 过滤不在数据中的id 进行下载
@@ -247,4 +250,4 @@ if __name__ == "__main__":
     future = asyncio.ensure_future(download_new_activities())
     loop.run_until_complete(future)
 
-    make_activities_file(SQL_FILE, GPX_FOLDER, JSON_FILE)
+    # make_activities_file(SQL_FILE, GPX_FOLDER, JSON_FILE)

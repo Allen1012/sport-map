@@ -9,7 +9,7 @@ import os
 from sqlalchemy import func
 from gpxtrackposter import track_loader
 from config import GPX_TO_STRAVA_FOLDER
-from .db import init_db, update_or_create_activity, Activity
+from .db import init_db, update_or_create_activity, Activity ,LoadXingzheGpxLog
 
 
 
@@ -152,8 +152,19 @@ class Generator:
             print(f"something wrong with {str(e)}")
             return []
 
-    # activity_file, data_type, name=None, description=None,
-    #                         activity_type=None, private=None, external_id=None):
+    # 从数据中读取最近30天行者下载过的track_id Todo
+    def get_xingzhe_load_track_ids(self, brfore_days=30):
+        try:
+            before_load_time = int(time.time()) - brfore_days * 24 * 3600
+            print("before_load_time:", before_load_time)
+            loadTrackLogs = self.session.query(LoadXingzheGpxLog).filter(LoadXingzheGpxLog.load_time > before_load_time).all()
+            return [str(a.track_id) for a in loadTrackLogs]
+        except Exception as e:
+            # pass the error
+            print(f"出了点问题啊：{str(e)}")
+            return []
+
+    # 上传活动到strava
     def upload_activitys(self):
         print("# in: upload_activitys")
 
@@ -177,9 +188,7 @@ class Generator:
                 # print(gpx_m.tracks)
                 # print(gpx_m.tracks[0].name)
                 # print(gpx_m.tracks[0].number)
-
                 # print(gpx_m.tracks[0].source)
-
                 try:
                     desc = gpx_m.name + " (load gpx form " + gpx_m.tracks[0].source + ")"
                     type = 'ride'
@@ -194,13 +203,7 @@ class Generator:
                     # print(ret_a)
                 except Exception as e:
                     print(f"something wrong with {str(e)}")
-
                 file.close()
                 print("-----------")
-
             os.remove(file_name)
-
-        #
-        # file_path = '/Users/meng/Documents/gpx/333333.gpx'
-
         print("##########")

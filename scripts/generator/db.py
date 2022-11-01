@@ -23,7 +23,6 @@ def randomword():
 # reverse the location (lan, lon) -> location detail
 g = Nominatim(user_agent=randomword())
 
-
 ACTIVITY_KEYS = [
     "run_id",
     "name",
@@ -43,6 +42,7 @@ LOAD_GPX_KEYS = [
     "name",
     "load_time",
 ]
+
 
 class Activity(Base):
     __tablename__ = "activities"
@@ -94,6 +94,7 @@ class LoadXingzheGpxLog(Base):
 
         return out
 
+
 def select_load_logs(db_path):
     print("###")
     print("in select_load_logs():")
@@ -106,12 +107,31 @@ def select_load_logs(db_path):
     session.add(loadLog)
     session.commit()
 
-    retLogs = session.query(LoadXingzheGpxLog).filter(LoadXingzheGpxLog.track_id.in_([1234,1235])).all()
+    retLogs = session.query(LoadXingzheGpxLog).filter(LoadXingzheGpxLog.track_id.in_([1234, 1235])).all()
     for item in retLogs:
         print(item.to_dict())
         print(item.name)
 
     print("###############")
+
+
+def insert_xingzhe_load_log(db_path, track_id, name):
+    print("###")
+    print("in insert_xingzhe_load_log():")
+    session = init_db(db_path)
+    loadLog = LoadXingzheGpxLog(
+        track_id=track_id,
+        name=name,
+        load_time=int(time.time())
+    )
+    session.add(loadLog)
+    session.commit()
+    print("###############")
+
+
+def get_has_load_xingzhe_track_ids():
+    session = init_db("")
+    retLogs = session.query(LoadXingzheGpxLog).filter(LoadXingzheGpxLog.track_id.in_([1234, 1235])).all()
 
 
 def update_or_create_activity(session, run_activity):
@@ -165,7 +185,6 @@ def update_or_create_activity(session, run_activity):
             activity.average_speed = float(run_activity.average_speed)
             activity.summary_polyline = run_activity.map.summary_polyline
 
-
         print("+:" + activity.name)
     except Exception as e:
         print(f"something wrong with {run_activity.id}")
@@ -176,7 +195,7 @@ def update_or_create_activity(session, run_activity):
 
 
 def init_db(db_path):
-    print("db_path:"+db_path)
+    print("db_path:" + db_path)
     engine = create_engine(
         f"sqlite:///{db_path}", connect_args={"check_same_thread": False}
     )
@@ -185,10 +204,10 @@ def init_db(db_path):
     session = sessionmaker(bind=engine)
     return session()
 
+
 # 清空数据库
 def del_db(db_path):
-    print("db_path:"+db_path)
+    print("db_path:" + db_path)
     session = init_db(db_path)
     session.query(Activity).filter(Activity.run_id > 0).delete()
     session.commit()
-

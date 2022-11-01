@@ -36,10 +36,10 @@ if __name__ == "__main__":
     options = parser.parse_args()
     # del_db(SQL_FILE)
 
-    select_load_logs(SQL_FILE)
+    # select_load_logs(SQL_FILE)
 
 
 
     # run_strava_sync(options.client_id, options.client_secret, options.refresh_token)
 
-    # test_upload(options.client_id, options.client_secret, options.refresh_token)
+    test_upload(options.client_id, options.client_secret, options.refresh_token)
